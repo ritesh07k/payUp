@@ -1,1 +1,7 @@
-/workspaces/payUp/payUp/src/main/java/com/payUp/build/BuildApplication.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/PayUpApplication.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/common/entity/BaseEntity.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/common/response/ApiResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/AppException.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/DuplicateResourceException.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/GlobalExceptionHandler.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/ResourceNotFoundException.java
