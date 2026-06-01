@@ -1,0 +1,5 @@
+com/payUp/build/merchant/entity/Merchant$MerchantBuilder.class
+com/payUp/build/auth/security/JwtService.class
+com/payUp/build/merchant/entity/Merchant.class
+com/payUp/build/merchant/entity/MerchantStatus.class
+com/payUp/build/merchant/repository/MerchantRepository.class
