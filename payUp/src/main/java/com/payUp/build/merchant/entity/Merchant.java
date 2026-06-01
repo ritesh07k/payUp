@@ -26,7 +26,6 @@ public class Merchant extends BaseEntity {
     @Column(nullable = false)
     private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "merchant_status")
     private MerchantStatus status;
 }
