@@ -15,4 +15,5 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/ResourceNotFoundException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/Merchant.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/MerchantStatus.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/MerchantStatusConverter.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/repository/MerchantRepository.java

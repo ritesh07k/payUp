@@ -1,5 +1,6 @@
 com/payUp/build/auth/dto/LoginRequest.class
 com/payUp/build/merchant/entity/Merchant$MerchantBuilder.class
+com/payUp/build/merchant/entity/MerchantStatusConverter.class
 com/payUp/build/auth/security/JwtService.class
 com/payUp/build/auth/dto/AuthResponse.class
 com/payUp/build/merchant/entity/Merchant.class
