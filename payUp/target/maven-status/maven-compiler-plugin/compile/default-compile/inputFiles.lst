@@ -1,7 +1,14 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/PayUpApplication.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/controller/AuthController.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/dto/AuthResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/dto/LoginRequest.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/dto/SignupRequest.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/security/JwtAuthFilter.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/security/JwtService.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/service/AuthService.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/entity/BaseEntity.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/response/ApiResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/config/SecurityConfig.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/AppException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/DuplicateResourceException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/GlobalExceptionHandler.java

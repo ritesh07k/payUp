@@ -1,5 +1,12 @@
+com/payUp/build/auth/dto/LoginRequest.class
 com/payUp/build/merchant/entity/Merchant$MerchantBuilder.class
 com/payUp/build/auth/security/JwtService.class
+com/payUp/build/auth/dto/AuthResponse.class
 com/payUp/build/merchant/entity/Merchant.class
+com/payUp/build/auth/service/AuthService.class
 com/payUp/build/merchant/entity/MerchantStatus.class
+com/payUp/build/auth/security/JwtAuthFilter.class
+com/payUp/build/auth/dto/SignupRequest.class
+com/payUp/build/config/SecurityConfig.class
 com/payUp/build/merchant/repository/MerchantRepository.class
+com/payUp/build/auth/controller/AuthController.class
