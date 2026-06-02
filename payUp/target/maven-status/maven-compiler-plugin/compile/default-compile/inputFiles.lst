@@ -9,6 +9,13 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/entity/BaseEntity.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/response/ApiResponse.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/config/SecurityConfig.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/controller/CredentialController.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/dto/CreateCredentialRequest.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/dto/CredentialResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/entity/ApiCredential.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/entity/KeyType.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/repository/ApiCredentialRepository.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/service/CredentialService.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/AppException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/DuplicateResourceException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/GlobalExceptionHandler.java
