@@ -4,6 +4,8 @@ com/payUp/build/auth/security/JwtService.class
 com/payUp/build/merchant/entity/MerchantStatus.class
 com/payUp/build/credential/service/CredentialService.class
 com/payUp/build/config/SecurityConfig.class
+com/payUp/build/merchant/mapper/MerchantMapper.class
+com/payUp/build/merchant/dto/UpdateProfileRequest.class
 com/payUp/build/merchant/repository/MerchantRepository.class
 com/payUp/build/credential/dto/CredentialResponse.class
 com/payUp/build/credential/entity/ApiCredential$ApiCredentialBuilder.class
@@ -17,5 +19,8 @@ com/payUp/build/auth/service/AuthService.class
 com/payUp/build/credential/repository/ApiCredentialRepository.class
 com/payUp/build/auth/security/JwtAuthFilter.class
 com/payUp/build/auth/dto/SignupRequest.class
+com/payUp/build/merchant/service/MerchantService.class
 com/payUp/build/credential/dto/CreateCredentialRequest.class
+com/payUp/build/merchant/controller/MerchantController.class
+com/payUp/build/merchant/dto/MerchantProfileResponse.class
 com/payUp/build/credential/controller/CredentialController.class

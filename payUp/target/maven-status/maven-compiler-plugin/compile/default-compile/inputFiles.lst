@@ -20,7 +20,12 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/DuplicateResourceException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/GlobalExceptionHandler.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/ResourceNotFoundException.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/controller/MerchantController.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/dto/MerchantProfileResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/dto/UpdateProfileRequest.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/Merchant.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/MerchantStatus.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/MerchantStatusConverter.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/mapper/MerchantMapper.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/repository/MerchantRepository.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/service/MerchantService.java
