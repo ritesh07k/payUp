@@ -1,3 +1,4 @@
+com/payUp/build/exception/DuplicateResourceException.class
 com/payUp/build/payment/dto/CreatePaymentRequest.class
 com/payUp/build/merchant/entity/MerchantStatus.class
 com/payUp/build/credential/service/CredentialService.class
@@ -13,6 +14,7 @@ com/payUp/build/credential/entity/ApiCredential.class
 com/payUp/build/payment/dto/OrderResponse.class
 com/payUp/build/auth/dto/AuthResponse.class
 com/payUp/build/auth/service/AuthService.class
+com/payUp/build/exception/AppException.class
 com/payUp/build/payment/dto/PaymentResponse.class
 com/payUp/build/payment/service/OrderService.class
 com/payUp/build/credential/repository/ApiCredentialRepository.class
@@ -20,6 +22,7 @@ com/payUp/build/payment/entity/Payment.class
 com/payUp/build/merchant/service/MerchantService.class
 com/payUp/build/credential/dto/CreateCredentialRequest.class
 com/payUp/build/merchant/controller/MerchantController.class
+com/payUp/build/common/entity/BaseEntity.class
 com/payUp/build/credential/controller/CredentialController.class
 com/payUp/build/auth/dto/LoginRequest.class
 com/payUp/build/credential/entity/KeyType.class
@@ -27,14 +30,18 @@ com/payUp/build/payment/entity/Payment$PaymentBuilder.class
 com/payUp/build/auth/security/JwtService.class
 com/payUp/build/payment/controller/OrderController.class
 com/payUp/build/payment/repository/PaymentRepository.class
+com/payUp/build/exception/GlobalExceptionHandler.class
 com/payUp/build/payment/service/PaymentService.class
 com/payUp/build/payment/entity/Order$OrderBuilder.class
 com/payUp/build/payment/entity/PaymentStatus.class
 com/payUp/build/merchant/entity/Merchant$MerchantBuilder.class
 com/payUp/build/merchant/entity/MerchantStatusConverter.class
+com/payUp/build/PayUpApplication.class
 com/payUp/build/merchant/entity/Merchant.class
 com/payUp/build/payment/controller/PaymentController.class
 com/payUp/build/payment/dto/CreateOrderRequest.class
+com/payUp/build/exception/ResourceNotFoundException.class
+com/payUp/build/common/response/ApiResponse.class
 com/payUp/build/auth/security/JwtAuthFilter.class
 com/payUp/build/auth/dto/SignupRequest.class
 com/payUp/build/payment/entity/OrderStatus.class

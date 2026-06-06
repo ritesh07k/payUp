@@ -13,6 +13,7 @@ import com.payUp.build.auth.dto.SignupRequest;
 import com.payUp.build.auth.service.AuthService;
 import com.payUp.build.common.response.ApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<AuthResponse>> signup(
-            @RequestBody SignupRequest request) {
+            @RequestBody @Valid SignupRequest request) {
         AuthResponse response = authService.signup(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -33,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(
-            @RequestBody LoginRequest request) {
+            @RequestBody @Valid LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity
                 .ok(ApiResponse.success(response, "Login successful"));
