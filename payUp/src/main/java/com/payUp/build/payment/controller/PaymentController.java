@@ -21,6 +21,7 @@ import com.payUp.build.payment.dto.CreatePaymentRequest;
 import com.payUp.build.payment.dto.PaymentResponse;
 import com.payUp.build.payment.service.PaymentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,7 +35,7 @@ public class PaymentController {
     @PostMapping
     public ResponseEntity<ApiResponse<PaymentResponse>> initiatePayment(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody CreatePaymentRequest request) {
+            @RequestBody @Valid CreatePaymentRequest request) {
 
         UUID merchantId = getMerchantId(userDetails);
         return ResponseEntity
