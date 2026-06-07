@@ -19,6 +19,7 @@ import com.payUp.build.payment.entity.Payment;
 import com.payUp.build.payment.entity.PaymentStatus;
 import com.payUp.build.payment.repository.OrderRepository;
 import com.payUp.build.payment.repository.PaymentRepository;
+import com.payUp.build.webhook.service.WebhookService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final MerchantRepository merchantRepository;
+    private final WebhookService webhookService;
 
     @Transactional
     public PaymentResponse initiatePayment(UUID merchantId,
@@ -76,12 +78,14 @@ public class PaymentService {
         if (bankApproved) {
             payment.setStatus(PaymentStatus.CAPTURED);
             payment.setBankReferenceId("BANK_REF_" + UUID.randomUUID().toString()
-                    .substring(0, 8).toUpperCase());
-            order.setStatus(OrderStatus.PAID);
+                .substring(0, 8).toUpperCase());
+             order.setStatus(OrderStatus.PAID);
+            webhookService.dispatchEvent(merchant, "payment.captured", toResponse(payment));
         } else {
             payment.setStatus(PaymentStatus.FAILED);
             payment.setFailureReason("Bank declined the transaction");
             order.setStatus(OrderStatus.FAILED);
+            webhookService.dispatchEvent(merchant, "payment.failed", toResponse(payment));
         }
 
         orderRepository.save(order);
