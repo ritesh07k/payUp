@@ -21,6 +21,7 @@ public class WebhookEndpoint extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
+    // TODO: Phase 10 - encrypt this field using AES-256 before production
     @Column(nullable = false)
     private String secret;
 
