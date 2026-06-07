@@ -62,8 +62,13 @@ public class WebhookService {
         endpointRepository.save(endpoint);
 
         log.info("Webhook endpoint registered for merchant: {}", merchantId);
-        return new WebhookEndpointResponse(endpoint.getId(), endpoint.getUrl(),
-                endpoint.isActive());
+        return new WebhookEndpointResponse(
+            endpoint.getId(),
+            endpoint.getUrl(),
+            endpoint.isActive(),
+            secret,
+            "Store this secret safely. Use it to verify webhook signatures. It will not be shown again."
+            );
     }
 
     public List<WebhookEndpointResponse> getEndpoints(UUID merchantId) {
@@ -71,10 +76,15 @@ public class WebhookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Merchant not found"));
 
         return endpointRepository.findByMerchantAndIsActiveTrue(merchant)
-                .stream()
-                .map(e -> new WebhookEndpointResponse(e.getId(), e.getUrl(),
-                        e.isActive()))
-                .toList();
+            .stream()
+            .map(e -> new WebhookEndpointResponse(
+                    e.getId(),
+                    e.getUrl(),
+                    e.isActive(),
+                    null,
+                    null
+            ))
+            .toList();
     }
 
     @Async

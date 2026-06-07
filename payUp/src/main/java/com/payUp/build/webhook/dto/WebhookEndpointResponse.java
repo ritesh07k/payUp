@@ -12,4 +12,6 @@ public class WebhookEndpointResponse {
     private UUID id;
     private String url;
     private boolean isActive;
+    private String secret;
+    private String note;
 }
