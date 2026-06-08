@@ -1,5 +1,12 @@
 package com.payUp.build.refund.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.payUp.build.exception.AppException;
 import com.payUp.build.exception.ResourceNotFoundException;
 import com.payUp.build.merchant.entity.Merchant;
@@ -13,13 +20,10 @@ import com.payUp.build.refund.entity.Refund;
 import com.payUp.build.refund.entity.RefundStatus;
 import com.payUp.build.refund.repository.RefundRepository;
 import com.payUp.build.webhook.service.WebhookService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.payUp.build.events.EventPublisher;
+import com.payUp.build.events.RefundEvent;
 
-import java.util.List;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class RefundService {
     private final PaymentRepository paymentRepository;
     private final MerchantRepository merchantRepository;
     private final WebhookService webhookService;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public RefundResponse initiateRefund(UUID merchantId,
@@ -87,13 +92,19 @@ public class RefundService {
             refund.setStatus(RefundStatus.SUCCESS);
             refund.setBankReferenceId("REFUND_REF_" + UUID.randomUUID()
                     .toString().substring(0, 8).toUpperCase());
-            webhookService.dispatchEvent(merchant, "refund.success",
-                    toResponse(refund));
+            eventPublisher.publishRefundEvent(new RefundEvent(
+            refund.getId(), payment.getId(), merchant.getId(),
+            payment.getAmount(), payment.getCurrency(),
+            RefundStatus.SUCCESS, "refund.success",
+            java.time.LocalDateTime.now()));
         } else {
             refund.setStatus(RefundStatus.FAILED);
             refund.setFailureReason("Bank declined the refund");
-            webhookService.dispatchEvent(merchant, "refund.failed",
-                    toResponse(refund));
+            eventPublisher.publishRefundEvent(new RefundEvent(
+            refund.getId(), payment.getId(), merchant.getId(),
+            payment.getAmount(), payment.getCurrency(),
+            RefundStatus.FAILED, "refund.failed",
+            java.time.LocalDateTime.now()));
         }
 
         return toResponse(refundRepository.save(refund));
