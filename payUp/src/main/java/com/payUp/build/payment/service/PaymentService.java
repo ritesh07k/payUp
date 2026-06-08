@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.payUp.build.events.EventPublisher;
+import com.payUp.build.events.PaymentEvent;
 import com.payUp.build.exception.AppException;
 import com.payUp.build.exception.ResourceNotFoundException;
 import com.payUp.build.merchant.entity.Merchant;
@@ -31,6 +33,7 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final MerchantRepository merchantRepository;
     private final WebhookService webhookService;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public PaymentResponse initiatePayment(UUID merchantId,
@@ -78,14 +81,22 @@ public class PaymentService {
         if (bankApproved) {
             payment.setStatus(PaymentStatus.CAPTURED);
             payment.setBankReferenceId("BANK_REF_" + UUID.randomUUID().toString()
-                .substring(0, 8).toUpperCase());
-             order.setStatus(OrderStatus.PAID);
-            webhookService.dispatchEvent(merchant, "payment.captured", toResponse(payment));
+                    .substring(0, 8).toUpperCase());
+            order.setStatus(OrderStatus.PAID);
+            eventPublisher.publishPaymentEvent(new PaymentEvent(
+                    payment.getId(), order.getId(), merchant.getId(),
+                    payment.getAmount(), payment.getCurrency(),
+                    PaymentStatus.CAPTURED, "payment.captured",
+                    java.time.LocalDateTime.now()));
         } else {
             payment.setStatus(PaymentStatus.FAILED);
             payment.setFailureReason("Bank declined the transaction");
             order.setStatus(OrderStatus.FAILED);
-            webhookService.dispatchEvent(merchant, "payment.failed", toResponse(payment));
+            eventPublisher.publishPaymentEvent(new PaymentEvent(
+                    payment.getId(), order.getId(), merchant.getId(),
+                    payment.getAmount(), payment.getCurrency(),
+                    PaymentStatus.FAILED, "payment.failed",
+                    java.time.LocalDateTime.now()));
         }
 
         orderRepository.save(order);
