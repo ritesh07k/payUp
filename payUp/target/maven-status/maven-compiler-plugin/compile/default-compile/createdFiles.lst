@@ -16,6 +16,7 @@ com/payUp/build/merchant/repository/MerchantRepository.class
 com/payUp/build/credential/dto/CredentialResponse.class
 com/payUp/build/credential/entity/ApiCredential$ApiCredentialBuilder.class
 com/payUp/build/auth/controller/AuthController.class
+com/payUp/build/merchant/service/MerchantLookupService.class
 com/payUp/build/payment/entity/PaymentMethod.class
 com/payUp/build/credential/entity/ApiCredential.class
 com/payUp/build/payment/dto/OrderResponse.class
@@ -67,9 +68,11 @@ com/payUp/build/exception/ResourceNotFoundException.class
 com/payUp/build/common/response/ApiResponse.class
 com/payUp/build/refund/repository/RefundRepository.class
 com/payUp/build/events/PaymentEvent.class
+com/payUp/build/merchant/dto/MerchantCacheDto.class
 com/payUp/build/auth/security/JwtAuthFilter.class
 com/payUp/build/auth/dto/SignupRequest.class
 com/payUp/build/payment/entity/OrderStatus.class
+com/payUp/build/config/CacheConfig.class
 com/payUp/build/payment/entity/Order.class
 com/payUp/build/merchant/dto/MerchantProfileResponse.class
 com/payUp/build/payment/repository/OrderRepository.class

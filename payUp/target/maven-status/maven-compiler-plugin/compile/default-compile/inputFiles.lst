@@ -8,6 +8,7 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/auth/service/AuthService.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/entity/BaseEntity.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/common/response/ApiResponse.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/config/CacheConfig.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/config/KafkaConfig.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/config/SecurityConfig.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/credential/controller/CredentialController.java
@@ -27,6 +28,7 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/GlobalExceptionHandler.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/exception/ResourceNotFoundException.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/controller/MerchantController.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/dto/MerchantCacheDto.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/dto/MerchantProfileResponse.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/dto/UpdateProfileRequest.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/Merchant.java
@@ -34,6 +36,7 @@
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/entity/MerchantStatusConverter.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/mapper/MerchantMapper.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/repository/MerchantRepository.java
+/workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/service/MerchantLookupService.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/merchant/service/MerchantService.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/payment/controller/OrderController.java
 /workspaces/payUp/payUp/src/main/java/com/payUp/build/payment/controller/PaymentController.java

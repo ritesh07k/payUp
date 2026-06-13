@@ -12,7 +12,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.payUp.build.merchant.repository.MerchantRepository;
+import com.payUp.build.merchant.service.MerchantLookupService;
+import com.payUp.build.merchant.dto.MerchantCacheDto;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final MerchantRepository merchantRepository;
+    private final MerchantLookupService merchantLookupService;
 
     @Override
     protected void doFilterInternal(
@@ -46,15 +47,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.isTokenValid(jwt)) {
-                merchantRepository.findByEmail(email).ifPresent(merchant -> {
+                MerchantCacheDto merchant = merchantLookupService.findByEmail(email);
+                if (merchant != null) {
                     UserDetails userDetails = User.builder()
                             .username(merchant.getEmail())
                             .password(merchant.getPasswordHash())
                             .authorities(Collections.emptyList())
                             .build();
 
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(
+                    UsernamePasswordAuthenticationToken authToken
+                            = new UsernamePasswordAuthenticationToken(
                                     userDetails,
                                     null,
                                     userDetails.getAuthorities()
@@ -65,10 +67,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                });
+                }
+            
             }
         }
 
         filterChain.doFilter(request, response);
-    }
+ 
+   }
 }
