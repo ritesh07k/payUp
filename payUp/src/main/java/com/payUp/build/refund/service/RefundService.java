@@ -22,6 +22,9 @@ import com.payUp.build.refund.repository.RefundRepository;
 import com.payUp.build.webhook.service.WebhookService;
 import com.payUp.build.events.EventPublisher;
 import com.payUp.build.events.RefundEvent;
+import com.payUp.build.ledger.entity.EntryType;
+import com.payUp.build.ledger.entity.ReferenceType;
+import com.payUp.build.ledger.service.LedgerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +37,7 @@ public class RefundService {
     private final MerchantRepository merchantRepository;
     private final WebhookService webhookService;
     private final EventPublisher eventPublisher;
+    private final LedgerService ledgerService;
 
     @Transactional
     public RefundResponse initiateRefund(UUID merchantId,
@@ -92,22 +96,32 @@ public class RefundService {
             refund.setStatus(RefundStatus.SUCCESS);
             refund.setBankReferenceId("REFUND_REF_" + UUID.randomUUID()
                     .toString().substring(0, 8).toUpperCase());
+
+            refund = refundRepository.save(refund);
+
+            ledgerService.recordEntry(merchant, EntryType.DEBIT, refund.getAmount(),
+                refund.getCurrency(), ReferenceType.REFUND, refund.getId(),
+                "Refund issued for payment " + payment.getId());
+
             eventPublisher.publishRefundEvent(new RefundEvent(
-            refund.getId(), payment.getId(), merchant.getId(),
-            payment.getAmount(), payment.getCurrency(),
-            RefundStatus.SUCCESS, "refund.success",
-            java.time.LocalDateTime.now()));
+                refund.getId(), payment.getId(), merchant.getId(),
+                payment.getAmount(), payment.getCurrency(),
+                RefundStatus.SUCCESS, "refund.success",
+                java.time.LocalDateTime.now()));
         } else {
             refund.setStatus(RefundStatus.FAILED);
             refund.setFailureReason("Bank declined the refund");
+
+            refund = refundRepository.save(refund);
+
             eventPublisher.publishRefundEvent(new RefundEvent(
-            refund.getId(), payment.getId(), merchant.getId(),
-            payment.getAmount(), payment.getCurrency(),
-            RefundStatus.FAILED, "refund.failed",
-            java.time.LocalDateTime.now()));
+                refund.getId(), payment.getId(), merchant.getId(),
+                payment.getAmount(), payment.getCurrency(),
+                RefundStatus.FAILED, "refund.failed",
+                java.time.LocalDateTime.now()));
         }
 
-        return toResponse(refundRepository.save(refund));
+        return toResponse(refund);
     }
 
     public List<RefundResponse> getRefundsByPayment(UUID paymentId, UUID merchantId) {

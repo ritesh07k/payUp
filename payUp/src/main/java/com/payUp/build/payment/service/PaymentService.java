@@ -22,6 +22,9 @@ import com.payUp.build.payment.entity.PaymentStatus;
 import com.payUp.build.payment.repository.OrderRepository;
 import com.payUp.build.payment.repository.PaymentRepository;
 import com.payUp.build.webhook.service.WebhookService;
+import com.payUp.build.ledger.entity.EntryType;
+import com.payUp.build.ledger.entity.ReferenceType;
+import com.payUp.build.ledger.service.LedgerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +37,7 @@ public class PaymentService {
     private final MerchantRepository merchantRepository;
     private final WebhookService webhookService;
     private final EventPublisher eventPublisher;
+    private final LedgerService ledgerService;
 
     @Transactional
     public PaymentResponse initiatePayment(UUID merchantId,
@@ -83,6 +87,14 @@ public class PaymentService {
             payment.setBankReferenceId("BANK_REF_" + UUID.randomUUID().toString()
                     .substring(0, 8).toUpperCase());
             order.setStatus(OrderStatus.PAID);
+
+            orderRepository.save(order);
+            payment = paymentRepository.save(payment);
+
+            ledgerService.recordEntry(merchant, EntryType.CREDIT, payment.getAmount(),
+                payment.getCurrency(), ReferenceType.PAYMENT, payment.getId(),
+                "Payment captured for order " + order.getId());
+
             eventPublisher.publishPaymentEvent(new PaymentEvent(
                     payment.getId(), order.getId(), merchant.getId(),
                     payment.getAmount(), payment.getCurrency(),
@@ -92,6 +104,10 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.FAILED);
             payment.setFailureReason("Bank declined the transaction");
             order.setStatus(OrderStatus.FAILED);
+
+            orderRepository.save(order);
+            payment = paymentRepository.save(payment);
+            
             eventPublisher.publishPaymentEvent(new PaymentEvent(
                     payment.getId(), order.getId(), merchant.getId(),
                     payment.getAmount(), payment.getCurrency(),
@@ -99,8 +115,7 @@ public class PaymentService {
                     java.time.LocalDateTime.now()));
         }
 
-        orderRepository.save(order);
-        return toResponse(paymentRepository.save(payment));
+        return toResponse(payment);
     }
 
     private boolean simulateBankResponse() {
