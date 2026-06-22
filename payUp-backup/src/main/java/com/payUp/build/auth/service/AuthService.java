@@ -23,7 +23,6 @@ public class AuthService {
     private final MerchantRepository merchantRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
 
     public AuthResponse signup(SignupRequest request) {
         if (merchantRepository.existsByEmail(request.getEmail())) {
@@ -39,9 +38,8 @@ public class AuthService {
 
         merchantRepository.save(merchant);
 
-        String accessToken = jwtService.generateToken(merchant);
-        String refreshToken = refreshTokenService.generateAndStore(merchant.getId().toString());
-        return new AuthResponse(accessToken, refreshToken, merchant.getEmail(), merchant.getBusinessName());
+        String token = jwtService.generateToken(merchant);
+        return new AuthResponse(token, merchant.getEmail(), merchant.getBusinessName());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -56,29 +54,7 @@ public class AuthService {
             throw new AppException("Account suspended", HttpStatus.FORBIDDEN);
         }
 
-        String accessToken = jwtService.generateToken(merchant);
-        String refreshToken = refreshTokenService.generateAndStore(merchant.getId().toString());
-        return new AuthResponse(accessToken, refreshToken, merchant.getEmail(), merchant.getBusinessName());
-    }
-
-    public AuthResponse refresh(String refreshToken) {
-        String merchantId = refreshTokenService.validateAndGetMerchantId(refreshToken);
-        if (merchantId == null) {
-            throw new AppException("Invalid or expired refresh token", HttpStatus.UNAUTHORIZED);
-        }
-
-        Merchant merchant = merchantRepository.findById(java.util.UUID.fromString(merchantId))
-                .orElseThrow(() -> new AppException("Merchant not found", HttpStatus.UNAUTHORIZED));
-
-        // rotate: delete old, issue new
-        refreshTokenService.rotate(refreshToken, merchantId);
-        String newRefreshToken = refreshTokenService.generateAndStore(merchantId);
-        String newAccessToken = jwtService.generateToken(merchant);
-
-        return new AuthResponse(newAccessToken, newRefreshToken, merchant.getEmail(), merchant.getBusinessName());
-    }
-
-    public void logout(String refreshToken) {
-        refreshTokenService.invalidate(refreshToken);
+        String token = jwtService.generateToken(merchant);
+        return new AuthResponse(token, merchant.getEmail(), merchant.getBusinessName());
     }
 }

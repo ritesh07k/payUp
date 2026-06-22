@@ -2,9 +2,14 @@ package com.payUp.build.auth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.payUp.build.auth.dto.*;
+import com.payUp.build.auth.dto.AuthResponse;
+import com.payUp.build.auth.dto.LoginRequest;
+import com.payUp.build.auth.dto.SignupRequest;
 import com.payUp.build.auth.service.AuthService;
 import com.payUp.build.common.response.ApiResponse;
 
@@ -33,21 +38,5 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         return ResponseEntity
                 .ok(ApiResponse.success(response, "Login successful"));
-    }
-
-    @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<AuthResponse>> refresh(
-            @RequestBody @Valid RefreshRequest request) {
-        AuthResponse response = authService.refresh(request.getRefreshToken());
-        return ResponseEntity
-                .ok(ApiResponse.success(response, "Token refreshed successfully"));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(
-            @RequestBody @Valid LogoutRequest request) {
-        authService.logout(request.getRefreshToken());
-        return ResponseEntity
-                .ok(ApiResponse.success(null, "Logged out successfully"));
     }
 }

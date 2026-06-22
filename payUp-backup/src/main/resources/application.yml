@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:payup}
     username: ${DB_USER:payup_user}
-    password: ${DB_PASSWORD:REDACTED}
+    password: ${DB_PASSWORD:payup_pass}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -51,5 +51,4 @@ application:
   security:
     jwt:
       secret-key: ${JWT_SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
-      expiration: ${JWT_EXPIRATION:900000}
-      refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+      expiration: ${JWT_EXPIRATION:86400000}
