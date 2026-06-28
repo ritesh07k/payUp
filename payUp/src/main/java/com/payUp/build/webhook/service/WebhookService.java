@@ -41,6 +41,7 @@ public class WebhookService {
     private final WebhookDeliveryRepository deliveryRepository;
     private final MerchantRepository merchantRepository;
     private final ObjectMapper objectMapper;
+    private final WebhookEncryptionService encryptionService;
 
     private static final int MAX_ATTEMPTS = 5;
     private static final long[] RETRY_DELAYS_MINUTES = {1, 5, 30, 120, 480};
@@ -50,12 +51,13 @@ public class WebhookService {
         Merchant merchant = merchantRepository.findById(merchantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Merchant not found"));
 
-        String secret = generateSecret();
+        String plainSecret = generateSecret();
+        String encryptedSecret = encryptionService.encrypt(plainSecret);
 
         WebhookEndpoint endpoint = WebhookEndpoint.builder()
                 .merchant(merchant)
                 .url(request.getUrl())
-                .secret(secret)
+                .secret(encryptedSecret)
                 .isActive(true)
                 .build();
 
@@ -66,7 +68,7 @@ public class WebhookService {
             endpoint.getId(),
             endpoint.getUrl(),
             endpoint.isActive(),
-            secret,
+            plainSecret,
             "Store this secret safely. Use it to verify webhook signatures. It will not be shown again."
             );
     }
@@ -123,8 +125,9 @@ public class WebhookService {
         WebhookEndpoint endpoint = delivery.getWebhookEndpoint();
 
         try {
-            String signature = computeSignature(delivery.getPayload(),
-                    endpoint.getSecret());
+            // decrypt before computing HMAC — DB stores encrypted secret
+            String plainSecret = encryptionService.decrypt(endpoint.getSecret());
+            String signature = computeSignature(delivery.getPayload(), plainSecret);
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest httpRequest = HttpRequest.newBuilder()
