@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.payUp.build.auth.service.TokenBlacklistService;
 import com.payUp.build.merchant.service.MerchantLookupService;
 import com.payUp.build.merchant.dto.MerchantCacheDto;
 
@@ -27,6 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MerchantLookupService merchantLookupService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -43,6 +45,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
+
+        // reject blacklisted tokens immediately
+        if (tokenBlacklistService.isBlacklisted(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String email = jwtService.extractEmail(jwt);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -68,11 +77,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            
             }
         }
 
         filterChain.doFilter(request, response);
- 
-   }
+    }
 }

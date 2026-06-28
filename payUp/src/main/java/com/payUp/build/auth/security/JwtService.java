@@ -52,6 +52,12 @@ public class JwtService {
                 .getPayload();
     }
 
+    public long getRemainingValidity(String token) {
+        Date expiration = extractClaims(token).getExpiration();
+        long remaining = expiration.getTime() - System.currentTimeMillis();
+        return Math.max(remaining, 0);
+    }
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

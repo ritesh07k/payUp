@@ -24,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public AuthResponse signup(SignupRequest request) {
         if (merchantRepository.existsByEmail(request.getEmail())) {
@@ -70,7 +71,6 @@ public class AuthService {
         Merchant merchant = merchantRepository.findById(java.util.UUID.fromString(merchantId))
                 .orElseThrow(() -> new AppException("Merchant not found", HttpStatus.UNAUTHORIZED));
 
-        // rotate: delete old, issue new
         refreshTokenService.rotate(refreshToken, merchantId);
         String newRefreshToken = refreshTokenService.generateAndStore(merchantId);
         String newAccessToken = jwtService.generateToken(merchant);
@@ -78,7 +78,11 @@ public class AuthService {
         return new AuthResponse(newAccessToken, newRefreshToken, merchant.getEmail(), merchant.getBusinessName());
     }
 
-    public void logout(String refreshToken) {
+    public void logout(String accessToken, String refreshToken) {
+        // blacklist the access token for its remaining lifetime
+        long remaining = jwtService.getRemainingValidity(accessToken);
+        tokenBlacklistService.blacklist(accessToken, remaining);
+        // invalidate the refresh token
         refreshTokenService.invalidate(refreshToken);
     }
 }
