@@ -10,9 +10,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>auth-service</artifactId>
-    <name>auth-service</name>
-    <description>PayUp Auth Service</description>
+    <artifactId>merchant-service</artifactId>
+    <name>merchant-service</name>
+    <description>PayUp Merchant Service</description>
 
     <dependencies>
         <dependency>

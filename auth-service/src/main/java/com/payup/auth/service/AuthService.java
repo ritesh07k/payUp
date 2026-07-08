@@ -1,12 +1,15 @@
 package com.payup.auth.service;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.payup.auth.config.KafkaConfig;
 import com.payup.auth.dto.AuthResponse;
 import com.payup.auth.dto.LoginRequest;
 import com.payup.auth.dto.SignupRequest;
+import com.payup.auth.events.MerchantCreatedEvent;
 import com.payup.auth.security.JwtService;
 import com.payup.common.exception.AppException;
 import com.payup.common.exception.DuplicateResourceException;
@@ -15,7 +18,11 @@ import com.payup.auth.entity.CredentialStatus;
 import com.payup.auth.repository.CredentialRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -25,16 +32,12 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final TokenBlacklistService tokenBlacklistService;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public AuthResponse signup(SignupRequest request) {
         if (credentialRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email already registered");
         }
-
-        // TODO: once merchant-service exists, publish a MerchantCreated event
-        // (or call merchant-service via REST) here, passing request.getBusinessName()
-        // so the merchant profile gets created there. auth-service no longer
-        // stores businessName itself.
 
         Credential credential = Credential.builder()
                 .email(request.getEmail())
@@ -43,6 +46,15 @@ public class AuthService {
                 .build();
 
         credentialRepository.save(credential);
+
+        // publish event so merchant-service creates the profile asynchronously
+        MerchantCreatedEvent event = new MerchantCreatedEvent(
+                credential.getId(),
+                request.getBusinessName(),
+                LocalDateTime.now()
+        );
+        kafkaTemplate.send(KafkaConfig.MERCHANT_CREATED_TOPIC, credential.getId().toString(), event);
+        log.info("Published MerchantCreated event for merchantId: {}", credential.getId());
 
         String accessToken = jwtService.generateToken(credential);
         String refreshToken = refreshTokenService.generateAndStore(credential.getId().toString());
