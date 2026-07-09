@@ -22,6 +22,8 @@
         <module>common</module>
         <module>auth-service</module>
         <module>merchant-service</module>
+        <module>payment-service</module>
+        <module>refund-service</module>
     </modules>
 
     <properties>

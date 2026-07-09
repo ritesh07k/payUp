@@ -1,4 +1,4 @@
-package com.payup.merchant;
+package com.payup.refund;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.payup")
-public class MerchantServiceApplication {
+public class RefundServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MerchantServiceApplication.class, args);
+        SpringApplication.run(RefundServiceApplication.class, args);
     }
 }
