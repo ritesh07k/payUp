@@ -11,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,8 +24,14 @@ public class WebhookDeliveryService {
 
     private final WebhookEndpointRepository webhookEndpointRepository;
     private final WebhookDeliveryRepository webhookDeliveryRepository;
+    private final WebhookEncryptionService webhookEncryptionService;
+    private final HmacSigningService hmacSigningService;
     private final RestClient webhookDeliveryRestClient;
     private final ObjectMapper objectMapper;
+
+    private static final int MAX_ATTEMPTS = 4;
+    // attempt 1 -> retry in 1 min, attempt 2 -> 5 min, attempt 3 -> 30 min, attempt 4 -> DLQ
+    private static final int[] BACKOFF_MINUTES = {1, 5, 30};
 
     public void dispatch(UUID merchantId, String eventType, Object eventPayload) {
         List<WebhookEndpoint> endpoints =
@@ -42,35 +51,67 @@ public class WebhookDeliveryService {
         }
 
         for (WebhookEndpoint endpoint : endpoints) {
-            deliverToEndpoint(endpoint, eventType, payloadJson);
+            WebhookDelivery delivery = new WebhookDelivery();
+            delivery.setWebhookEndpointId(endpoint.getId());
+            delivery.setEventType(eventType);
+            delivery.setPayload(payloadJson);
+            delivery.setStatus(DeliveryStatus.PENDING);
+            delivery.setAttemptCount(0);
+            delivery = webhookDeliveryRepository.save(delivery);
+
+            attemptDelivery(endpoint, delivery);
         }
     }
 
-    private void deliverToEndpoint(WebhookEndpoint endpoint, String eventType, String payloadJson) {
-        WebhookDelivery delivery = new WebhookDelivery();
-        delivery.setWebhookEndpointId(endpoint.getId());
-        delivery.setEventType(eventType);
-        delivery.setPayload(payloadJson);
-        delivery.setStatus(DeliveryStatus.PENDING);
-        delivery.setAttemptCount(1);
+    public void attemptDelivery(WebhookEndpoint endpoint, WebhookDelivery delivery) {
+        String plainSecret = webhookEncryptionService.decrypt(endpoint.getSecret());
+        String signature = hmacSigningService.sign(delivery.getPayload(), plainSecret);
+
+        delivery.setAttemptCount(delivery.getAttemptCount() + 1);
 
         try {
             var response = webhookDeliveryRestClient.post()
                     .uri(endpoint.getUrl())
                     .header("Content-Type", "application/json")
-                    .body(payloadJson)
+                    .header("X-Payup-Signature", signature)
+                    .body(delivery.getPayload())
                     .retrieve()
                     .toBodilessEntity();
 
             delivery.setResponseCode(response.getStatusCode().value());
-            delivery.setStatus(response.getStatusCode().is2xxSuccessful()
-                    ? DeliveryStatus.DELIVERED : DeliveryStatus.FAILED);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                delivery.setStatus(DeliveryStatus.DELIVERED);
+                delivery.setNextRetryAt(null);
+            } else {
+                scheduleRetryOrFail(delivery);
+            }
 
         } catch (Exception e) {
-            log.warn("Webhook delivery failed for endpoint {}: {}", endpoint.getId(), e.getMessage());
-            delivery.setStatus(DeliveryStatus.FAILED);
+            log.warn("Webhook delivery attempt {} failed for endpoint {}: {}",
+                    delivery.getAttemptCount(), endpoint.getId(), e.getMessage());
+            scheduleRetryOrFail(delivery);
         }
 
         webhookDeliveryRepository.save(delivery);
+    }
+
+    private void scheduleRetryOrFail(WebhookDelivery delivery) {
+        int attempt = delivery.getAttemptCount();
+
+        if (attempt >= MAX_ATTEMPTS) {
+            delivery.setStatus(DeliveryStatus.FAILED);
+            delivery.setNextRetryAt(null);
+            log.warn("Webhook delivery {} exhausted {} attempts, marking FAILED (DLQ)",
+                    delivery.getId(), MAX_ATTEMPTS);
+        } else {
+            int backoffMinutes = BACKOFF_MINUTES[attempt - 1];
+            delivery.setStatus(DeliveryStatus.PENDING);
+            delivery.setNextRetryAt(Instant.now().plus(backoffMinutes, ChronoUnit.MINUTES));
+        }
+    }
+
+    public Optional<WebhookEndpoint> findEndpoint(UUID endpointId) {
+        return webhookEndpointRepository.findById(endpointId);
     }
 }

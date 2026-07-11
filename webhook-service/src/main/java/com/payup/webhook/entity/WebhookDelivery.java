@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -37,4 +38,7 @@ public class WebhookDelivery extends BaseEntity {
 
     @Column(name = "attempt_count", nullable = false)
     private int attemptCount = 0;
+
+    @Column(name = "next_retry_at")
+    private Instant nextRetryAt;
 }

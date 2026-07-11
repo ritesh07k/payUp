@@ -16,19 +16,22 @@ import java.util.UUID;
 public class WebhookEndpointService {
 
     private final WebhookEndpointRepository webhookEndpointRepository;
+    private final WebhookEncryptionService webhookEncryptionService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public WebhookEndpointResponse register(UUID merchantId, RegisterWebhookRequest request) {
+        String plainSecret = generateSecret();
+
         WebhookEndpoint endpoint = new WebhookEndpoint();
         endpoint.setMerchantId(merchantId);
         endpoint.setUrl(request.getUrl());
-        endpoint.setSecret(generateSecret());
+        endpoint.setSecret(webhookEncryptionService.encrypt(plainSecret));
         endpoint.setActive(true);
 
         WebhookEndpoint saved = webhookEndpointRepository.save(endpoint);
 
-        // Secret shown once at registration time, same pattern as monolith Phase 10
-        return new WebhookEndpointResponse(saved.getId(), saved.getUrl(), saved.isActive(), saved.getSecret());
+        // Plaintext secret shown once at registration time, never stored or logged again
+        return new WebhookEndpointResponse(saved.getId(), saved.getUrl(), saved.isActive(), plainSecret);
     }
 
     private String generateSecret() {
