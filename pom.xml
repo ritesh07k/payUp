@@ -24,6 +24,7 @@
         <module>merchant-service</module>
         <module>payment-service</module>
         <module>refund-service</module>
+        <module>webhook-service</module>
     </modules>
 
     <properties>
