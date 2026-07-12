@@ -25,6 +25,7 @@
         <module>payment-service</module>
         <module>refund-service</module>
         <module>webhook-service</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
