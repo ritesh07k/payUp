@@ -1,2 +1,0 @@
-ALTER TABLE merchants 
-    ALTER COLUMN status TYPE VARCHAR(20);
