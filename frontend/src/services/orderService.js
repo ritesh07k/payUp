@@ -2,10 +2,10 @@ import api from './api';
 
 export const listOrders = async () => {
   const response = await api.get('/orders');
-  return response.data;
+  return response.data.data;
 };
 
 export const createOrder = async (orderData) => {
   const response = await api.post('/orders', orderData);
-  return response.data;
+  return response.data.data;
 };
