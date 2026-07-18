@@ -34,6 +34,10 @@ public class JwtAuthGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
+        if (request.getMethod() == org.springframework.http.HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
+
         if (PUBLIC_PATHS.stream().anyMatch(path::equals)) {
             return chain.filter(exchange);
         }

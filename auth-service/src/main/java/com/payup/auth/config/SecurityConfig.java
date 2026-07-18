@@ -58,7 +58,10 @@ public class SecurityConfig {
             .exceptionHandling(ex ->
                 ex.authenticationEntryPoint(jwtAuthEntryPoint))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/auth/**",
+                                "/actuator/prometheus",
+                                "/actuator/health"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             
