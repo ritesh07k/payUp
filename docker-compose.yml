@@ -47,6 +47,30 @@ services:
       KAFKA_NUM_NETWORK_THREADS: 3
       KAFKA_SOCKET_REQUEST_MAX_BYTES: 104857600
 
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: payup-zipkin
+    ports:
+      - "9411:9411"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: payup-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: payup-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
 volumes:
   postgres_data:
 
