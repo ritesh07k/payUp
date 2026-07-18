@@ -29,6 +29,13 @@ public class OrderService {
         return toResponse(saved);
     }
 
+    public java.util.List<OrderResponse> listOrders(UUID merchantId) {
+        return orderRepository.findByMerchantIdOrderByCreatedAtDesc(merchantId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public OrderResponse getOrder(UUID merchantId, UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));

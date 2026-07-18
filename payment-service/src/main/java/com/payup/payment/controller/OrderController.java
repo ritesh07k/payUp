@@ -18,6 +18,12 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @GetMapping
+    public ApiResponse<java.util.List<OrderResponse>> listOrders(Authentication authentication) {
+        UUID merchantId = UUID.fromString(authentication.getName());
+        return ApiResponse.success(orderService.listOrders(merchantId));
+    }
+
     @PostMapping
     public ApiResponse<OrderResponse> createOrder(
             Authentication authentication,
