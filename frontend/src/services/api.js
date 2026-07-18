@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://special-fiesta-pjwg96rr9gv637vp5-8080.app.github.dev/api/v1',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 })
 
 api.interceptors.request.use((config) => {
