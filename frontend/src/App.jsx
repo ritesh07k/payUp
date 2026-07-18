@@ -4,6 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import OrdersPage from './pages/OrdersPage'
+import PaymentsPage from './pages/PaymentsPage'
+import RefundsPage from './pages/RefundsPage'
+import WebhooksPage from './pages/WebhooksPage'
 
 function App() {
   return (
@@ -25,6 +28,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <PaymentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/refunds"
+            element={
+              <ProtectedRoute>
+                <RefundsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/webhooks"
+            element={
+              <ProtectedRoute>
+                <WebhooksPage />
               </ProtectedRoute>
             }
           />
